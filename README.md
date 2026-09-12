@@ -246,40 +246,6 @@ Fixing 1 and 2 alone would probably move test F1 from ~0.41 into the 0.50+ range
 
 ---
 
-## Running it
-
-```bash
-git clone <your-repo-url>
-cd <repo>
-
-pip install ucimlrepo numpy pandas matplotlib seaborn scikit-learn jupyter
-
-jupyter notebook ASSIGNMENT_1_JAWAD.ipynb
-```
-
-Then run all cells. The dataset downloads automatically from the UCI repository via `fetch_ucirepo(id=222)` — no manual file handling.
-
-> **Note:** cell 13 contains prose in a code cell and will raise a `SyntaxError`. Convert it to a markdown cell (`Esc` then `M`) before a clean run-all.
-
-**Environment:** Python 3.12 · `RANDOM_STATE = 42` is set globally, so all splits, trees, and forests reproduce exactly.
-
-### Repository layout
-
-```
-.
-├── ASSIGNMENT_1_JAWAD.ipynb
-├── README.md
-└── images/
-    ├── 01_target_distribution.png
-    ├── 02_numeric_distributions.png
-    ├── 03_correlation_matrix.png
-    ├── 04_feature_importance.png
-    ├── 05_model_comparison.png
-    └── 06_overfitting_gap.png
-```
-
----
-
 ## Reference
 
 Moro, S., Rita, P., & Cortez, P. (2014). *Bank Marketing* [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5K306
