@@ -1,4 +1,4 @@
-# Bank Marketing — Term Deposit Subscription Prediction
+# Bank Marketing: Term Deposit Subscription Prediction
 
 Assignment 1 · Supervised classification on the [UCI Bank Marketing dataset](https://archive.ics.uci.edu/dataset/222/bank+marketing) (ID 222).
 
