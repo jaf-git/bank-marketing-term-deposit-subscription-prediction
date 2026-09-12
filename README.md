@@ -2,7 +2,7 @@
 
 Assignment 1 · Supervised classification on the [UCI Bank Marketing dataset](https://archive.ics.uci.edu/dataset/222/bank+marketing) (ID 222).
 
-The task: given what a Portuguese bank knows about a client *before* it calls them, predict whether that client will subscribe to a term deposit. Three classifiers are compared — Decision Tree, Gaussian Naive Bayes, and Random Forest — first on the full feature set, then on a reduced one.
+The task: given what a Portuguese bank knows about a client *before* it calls them, predict whether that client will subscribe to a term deposit. Three classifiers are compared Decision Tree, Gaussian Naive Bayes, and Random Forest first on the full feature set, then on a reduced one.
 
 ---
 
@@ -32,7 +32,7 @@ The task: given what a Portuguese bank knows about a client *before* it calls th
 | Categorical | `job`, `marital`, `education`, `default`, `housing`, `loan`, `contact`, `month`, `poutcome` |
 | Target | `y` — did the client subscribe? |
 
-**Class balance:** 39,922 "no" vs 5,289 "yes" — **11.70 % positives**. This single number drives every modelling decision below.
+**Class balance:** 39,922 "no" vs 5,289 "yes" **11.70 % positives**. This single number drives every modelling decision below.
 
 Missing values (the UCI `unknown` levels arrive as `NaN` via `ucimlrepo`):
 
@@ -53,7 +53,7 @@ All other columns are complete. No numeric column has gaps.
 
 ![Target class distribution](images/01_target_distribution.png)
 
-The imbalance is severe enough that a model predicting "no" for every single client scores **88.3 % accuracy** while being completely useless. That baseline is the number every result below has to beat in a meaningful way — which is why accuracy is reported but never used as the deciding metric.
+The imbalance is severe enough that a model predicting "no" for every single client scores **88.3 % accuracy** while being completely useless. That baseline is the number every result below has to beat in a meaningful way which is why accuracy is reported but never used as the deciding metric.
 
 ### Numeric feature distributions
 
@@ -62,7 +62,7 @@ The imbalance is severe enough that a model predicting "no" for every single cli
 Three things stand out:
 
 - **`balance`** is extremely right-skewed with negative values (overdrafts) in the left tail.
-- **`pdays`** uses `-1` as a sentinel for "never previously contacted" — which describes ~82 % of rows, matching the `poutcome` missingness exactly. It is not a true continuous variable.
+- **`pdays`** uses `-1` as a sentinel for "never previously contacted" which describes ~82 % of rows, matching the `poutcome` missingness exactly. It is not a true continuous variable.
 - **`campaign`** and **`previous`** are count variables with long thin tails; most clients were contacted a handful of times.
 
 `age` and `day_of_week` are the only roughly well-behaved distributions, which is part of why `StandardScaler` was chosen over `MinMaxScaler` — min-max would compress the bulk of `balance` into a sliver of the [0,1] range because of a few outliers.
@@ -95,7 +95,7 @@ Total cardinality is low, so one-hot encoding stays manageable and no target/fre
 Each of these was a deliberate choice, not a default:
 
 **1. Drop `duration`.**
-Call duration is only known *after* the call ends, and a call that ends in a subscription is mechanically longer. Keeping it leaks the target and inflates every metric. The UCI documentation explicitly warns about this. Dropping it is what makes the problem realistic — and it is why the scores here look modest compared to results you'll see elsewhere on this dataset.
+Call duration is only known *after* the call ends, and a call that ends in a subscription is mechanically longer. Keeping it leaks the target and inflates every metric. The UCI documentation explicitly warns about this. Dropping it is what makes the problem realistic and it is why the scores here look modest compared to results you'll see elsewhere on this dataset.
 
 **2. Encode the target as 0/1.** `yes → 1`, `no → 0`, so precision/recall/F1 are defined on the minority class of interest.
 
@@ -154,7 +154,7 @@ Evaluation uses a shared `evaluate_model()` helper that scores **both** train an
 | Gaussian Naive Bayes | **0.3925** | ± 0.0065 |
 | Random Forest | 0.3265 | ± 0.0187 |
 
-Cross-validation confirms the holdout ranking on F1 and shows Naive Bayes is also the **most stable** — its standard deviation is roughly a third of the other two.
+Cross-validation confirms the holdout ranking on F1 and shows Naive Bayes is also the **most stable** its standard deviation is roughly a third of the other two.
 
 ### Visual comparison
 
@@ -164,7 +164,7 @@ Cross-validation confirms the holdout ranking on F1 and shows Naive Bayes is als
 
 ![Train vs test F1](images/06_overfitting_gap.png)
 
-This chart is the most important diagnostic in the project. Both tree-based baselines memorise the training set almost perfectly (train F1 of 1.00 and 0.9999) and then collapse on unseen data. An unconstrained Decision Tree grows until every leaf is pure — that is textbook overfitting. Naive Bayes is the only model whose train and test scores agree, because it has almost no capacity to overfit in the first place.
+This chart is the most important diagnostic in the project. Both tree-based baselines memorise the training set almost perfectly (train F1 of 1.00 and 0.9999) and then collapse on unseen data. An unconstrained Decision Tree grows until every leaf is pure that is textbook overfitting. Naive Bayes is the only model whose train and test scores agree, because it has almost no capacity to overfit in the first place.
 
 ---
 
@@ -185,9 +185,9 @@ This chart is the most important diagnostic in the project. Both tree-based base
 | 9 | `education_tertiary` | 0.0140 |
 | 10 | `month_apr` | 0.0138 |
 
-Read this carefully, because impurity-based importance is biased. The top three are all high-cardinality continuous variables — Gini importance systematically inflates features with many possible split points, so `balance` and `age` ranking first is partly an artefact of the metric, not proof they are the best predictors.
+Read this carefully, because impurity-based importance is biased. The top three are all high-cardinality continuous variables Gini importance systematically inflates features with many possible split points, so `balance` and `age` ranking first is partly an artefact of the metric, not proof they are the best predictors.
 
-The genuinely interesting entry is **`poutcome_success` at rank 6**. It is a binary flag present in under 3.4 % of rows, yet it outranks every other encoded category. A client who said yes to a previous campaign is by far the strongest qualitative signal available — which is a concrete, actionable finding for a marketing team.
+The genuinely interesting entry is **`poutcome_success` at rank 6**. It is a binary flag present in under 3.4 % of rows, yet it outranks every other encoded category. A client who said yes to a previous campaign is by far the strongest qualitative signal available which is a concrete, actionable finding for a marketing team.
 
 ---
 
@@ -204,7 +204,7 @@ Second run: `SelectKBest(mutual_info_classif, k=15)` on the encoded matrix, plus
 **What changed:**
 
 - **Decision Tree improved dramatically on the thing that mattered.** Depth capping cut the train F1 from 1.00 to 0.36 and lifted ROC-AUC from 0.613 to 0.731. Precision doubled (0.30 → 0.60). The tree stopped memorising and started generalising. Note this is the depth limit doing the work, not the feature selection.
-- **Random Forest got worse** on every test metric. Discarding features starved the ensemble of the diversity it relies on — random forests already do implicit feature selection at each split, so doing it again upfront is redundant and harmful.
+- **Random Forest got worse** on every test metric. Discarding features starved the ensemble of the diversity it relies on random forests already do implicit feature selection at each split, so doing it again upfront is redundant and harmful.
 - **Naive Bayes lost a little F1** (0.412 → 0.353) but kept its ROC-AUC.
 
 The honest conclusion: feature selection was **not** a win here. Regularising the tree was.
@@ -226,7 +226,7 @@ Every F1 sits between 0.30 and 0.41. Recall never exceeds 0.46, meaning the best
 | Rank leads rather than label them | **Random Forest (baseline)** | ROC-AUC 0.789 — best at ordering clients by likelihood |
 | Explain the decision to a stakeholder | **Decision Tree (k=15, depth 8)** | Readable rules, and precision 0.601 is respectable |
 
-**Accuracy is the trap.** Random Forest's 89.5 % looks strong until you compare it to the 88.3 % you'd get by predicting "no" every time. The entire model earns barely more than one point over doing nothing — and the real value it adds is invisible in that metric. This is exactly why F1, recall, and ROC-AUC are reported.
+**Accuracy is the trap.** Random Forest's 89.5 % looks strong until you compare it to the 88.3 % you'd get by predicting "no" every time. The entire model earns barely more than one point over doing nothing and the real value it adds is invisible in that metric. This is exactly why F1, recall, and ROC-AUC are reported.
 
 ---
 
